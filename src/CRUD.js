@@ -135,6 +135,7 @@ const CRUD = () => {
       <Input
         placeholder="Digite a pergunta"
         value={text}
+        maxLength={385}
         onChangeText={setText}
       />
       <Input
