@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Select, VStack, Input, FlatList, Box, Text, Spinner, HStack } from 'native-base';
+import ConfirmationDialog from './ConfirmationDialog';
 
 const chemicalElements = ['Hidrogênio', 'Oxigênio', 'Hélio', 'Neônio', 'Argônio', 'Criptônio', 'Xenônio', 'Radônio', 'Oganessônio'];
 
@@ -12,6 +13,35 @@ const CRUD = () => {
   const [selectedId, setSelectedId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(5);
+
+ 
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+
+  const cancelDeleteAllQuestions = () => {
+    setShowDeleteConfirmation(false);
+  };
+
+  const handleDeleteAllQuestions = async () => {
+    setShowDeleteConfirmation(true);
+  };
+
+  const confirmDeleteAllQuestions = async () => {
+    setShowDeleteConfirmation(false);
+      await fetch('https://apigametcc.azurewebsites.net/api/pergunta', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      await fetch('https://apigametcc.azurewebsites.net/api/resposta', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      setQuestions([]);
+      setAnswers([]);
+  };
 
   const handleAddQuestion = async () => {
     const data = {
@@ -66,35 +96,37 @@ const CRUD = () => {
   const handleReloadQuestions = async () => {
     setLoadingQuestions(true);
     try {
-        const perguntaPromise = fetch('https://apigametcc.azurewebsites.net/api/pergunta');
-        const respostaPromise = fetch('https://apigametcc.azurewebsites.net/api/resposta');
-        
-        const [perguntaResponse, respostaResponse] = await Promise.all([perguntaPromise, respostaPromise]);
+      const perguntaPromise = fetch('https://apigametcc.azurewebsites.net/api/pergunta');
+      const respostaPromise = fetch('https://apigametcc.azurewebsites.net/api/resposta');
 
-        if (!perguntaResponse.ok || !respostaResponse.ok) {
-            throw new Error('Erro ao carregar dados');
+      const [perguntaResponse, respostaResponse] = await Promise.all([perguntaPromise, respostaPromise]);
+
+      if (!perguntaResponse.ok || !respostaResponse.ok) {
+        throw new Error('Erro ao carregar dados');
+      }
+
+      const perguntaData = await perguntaResponse.json();
+      const respostaData = await respostaResponse.json();
+
+      const perguntaComScore = perguntaData.map((pergunta, index) => {
+        // Verifica se há uma resposta correspondente para o índice atual
+        if (index < respostaData.length) {
+          // Encontra a resposta correspondente usando o mesmo índice
+          const respostaCorrespondente = respostaData[index];
+          // Define o score da pergunta como o score da resposta correspondente
+          pergunta.score = respostaCorrespondente.score;
         }
+        return pergunta;
+      });
 
-        const perguntaData = await perguntaResponse.json();
-        const respostaData = await respostaResponse.json();
-
-        const perguntaComScore = perguntaData.map(pergunta => {
-            const respostaCorrespondente = respostaData.find(resposta => resposta.id === pergunta.id);
-            if (respostaCorrespondente) {
-                // Adiciona o campo score ao objeto de pergunta
-                pergunta.score = respostaCorrespondente.score;
-            }
-            return pergunta;
-        });
-
-        setQuestions(perguntaComScore);
-        setAnswers(respostaData);
-        setLoadingQuestions(false);
+      setQuestions(perguntaComScore);
+      setAnswers(respostaData);
+      setLoadingQuestions(false);
     } catch (error) {
-        console.error('Erro ao carregar perguntas e respostas:', error);
-        setLoadingQuestions(false);
+      console.error('Erro ao carregar perguntas e respostas:', error);
+      setLoadingQuestions(false);
     }
-};
+  };
 
 
   const getTotalScore = () => {
@@ -135,7 +167,7 @@ const CRUD = () => {
       <Input
         placeholder="Digite a pergunta"
         value={text}
-        maxLength={385}
+        maxLength={300}
         onChangeText={setText}
       />
       <Input
@@ -147,6 +179,12 @@ const CRUD = () => {
       <Button onPress={handleUpdateQuestion}>Atualizar</Button>
       <Button onPress={handleDeleteQuestion}>Deletar</Button>
       <Button onPress={handleReloadQuestions}>Gerar Perguntas/Respostas</Button>
+      <Button colorScheme="red" onPress={handleDeleteAllQuestions}>Deletar Todas as Perguntas</Button>
+      <ConfirmationDialog 
+        isOpen={showDeleteConfirmation} 
+        onClose={cancelDeleteAllQuestions} 
+        onConfirm={confirmDeleteAllQuestions} 
+      />
 
       {loadingQuestions ? (
         <Spinner accessibilityLabel="Carregando perguntas" />
@@ -167,7 +205,7 @@ const CRUD = () => {
                 <Text fontWeight="bold">ID: {item.id}</Text>
                 <Text>Pergunta: {item.question}</Text>
                 <Text>Elemento Químico: {item.chemicalElement}</Text>
-                <Text>Resultado: {item.score || 'N/A'}</Text>
+                <Text>Resultado: {item.score}</Text>
                 <Button onPress={() => handleSelectQuestion(item.id, item.chemicalElement, item.question)}>Selecionar</Button>
               </Box>
             )}
@@ -177,10 +215,10 @@ const CRUD = () => {
         </>
       )}
 
-          <HStack space={2}>
-            <Button onPress={handlePrevPage} >Página Anterior</Button>
-            <Button onPress={handleNextPage} >Próxima Página</Button>
-          </HStack>
+      <HStack space={2}>
+        <Button onPress={handlePrevPage} >Página Anterior</Button>
+        <Button onPress={handleNextPage} >Próxima Página</Button>
+      </HStack>
 
       <Box mt={4}>
         <Text>Total de Pontos: {getTotalScore()}</Text>
