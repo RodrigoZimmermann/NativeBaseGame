@@ -13,8 +13,6 @@ const CRUD = () => {
   const [selectedId, setSelectedId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(5);
-
- 
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
   const cancelDeleteAllQuestions = () => {
@@ -73,17 +71,12 @@ const CRUD = () => {
   };
 
   const handleDeleteQuestion = async () => {
-    const data = {
-      question: text,
-      chemicalElement: selectedElement
-    };
     const url = `https://apigametcc.azurewebsites.net/api/pergunta/${selectedId}`;
     await fetch(url, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
+      }
     });
   };
 
@@ -203,7 +196,7 @@ const CRUD = () => {
                 mb={2}
               >
                 <Text fontWeight="bold">ID: {item.id}</Text>
-                <Text>Pergunta: {item.question}</Text>
+                <Text>Pergunta: {item.question.replace(/(.{50})/g, '$1-\n')}</Text>
                 <Text>Elemento Químico: {item.chemicalElement}</Text>
                 <Text>Resultado: {item.score}</Text>
                 <Button onPress={() => handleSelectQuestion(item.id, item.chemicalElement, item.question)}>Selecionar</Button>
