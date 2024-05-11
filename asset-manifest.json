@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.js": "/NativeBaseGame/static/js/main.8b6a564a.js",
+    "main.js": "/NativeBaseGame/static/js/main.de5702d9.js",
     "static/js/453.893ca790.chunk.js": "/NativeBaseGame/static/js/453.893ca790.chunk.js",
     "static/media/jogo.png": "/NativeBaseGame/static/media/jogo.e486295f9fbe9f26ebf9.png",
     "index.html": "/NativeBaseGame/index.html",
-    "main.8b6a564a.js.map": "/NativeBaseGame/static/js/main.8b6a564a.js.map",
+    "main.de5702d9.js.map": "/NativeBaseGame/static/js/main.de5702d9.js.map",
     "453.893ca790.chunk.js.map": "/NativeBaseGame/static/js/453.893ca790.chunk.js.map"
   },
   "entrypoints": [
-    "static/js/main.8b6a564a.js"
+    "static/js/main.de5702d9.js"
   ]
 }
