@@ -3,7 +3,6 @@ import {
   Box,
   Image,
   Text,
-  Link,
   HStack,
   Heading,
   Switch,
@@ -30,7 +29,7 @@ function App() {
         />
         <Heading size="lg">Bem vindo ao menu</Heading>
         <ToggleDarkMode />
-        <Heading size="lg">Pergunta</Heading>
+        <Heading size="lg"> Cadastro de perguntas</Heading>
         <CRUD />
       </VStack>
     </Box>

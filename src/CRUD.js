@@ -121,11 +121,6 @@ const CRUD = () => {
     }
   };
 
-
-  const getTotalScore = () => {
-    return answers.reduce((total, answer) => total + answer.score, 0);
-  };
-
   useEffect(() => {
     handleReloadQuestions();
   }, []);
@@ -146,6 +141,20 @@ const CRUD = () => {
 
   return (
     <VStack space={2}>
+       <Text>ID:</Text>
+        <Input
+        placeholder="ID"
+        value={selectedId ? selectedId.toString() : ''}
+        isReadOnly
+      />
+       <Text>Pergunta:</Text>
+        <Input
+        placeholder="Digite a pergunta"
+        value={text}
+        maxLength={300}
+        onChangeText={setText}
+      />
+       <Text>Elemento Químico:</Text>
       <Select
         selectedValue={selectedElement}
         minWidth={200}
@@ -157,17 +166,6 @@ const CRUD = () => {
           <Select.Item key={index} label={element} value={element} />
         ))}
       </Select>
-      <Input
-        placeholder="Digite a pergunta"
-        value={text}
-        maxLength={300}
-        onChangeText={setText}
-      />
-      <Input
-        placeholder="ID"
-        value={selectedId ? selectedId.toString() : ''}
-        isReadOnly
-      />
       <Button onPress={handleAddQuestion}>Adicionar</Button>
       <Button onPress={handleUpdateQuestion}>Atualizar</Button>
       <Button onPress={handleDeleteQuestion}>Deletar</Button>
@@ -198,7 +196,7 @@ const CRUD = () => {
                 <Text fontWeight="bold">ID: {item.id}</Text>
                 <Text>Pergunta: {item.question.replace(/(.{50})/g, '$1-\n')}</Text>
                 <Text>Elemento Químico: {item.chemicalElement}</Text>
-                <Text>Resultado: {item.score}</Text>
+                <Text>{item.score === 1 ? 'Resultado: Acertou' : item.score === 0 ? 'Resultado: Errou' : ''}</Text>
                 <Button onPress={() => handleSelectQuestion(item.id, item.chemicalElement, item.question)}>Selecionar</Button>
               </Box>
             )}
@@ -214,7 +212,8 @@ const CRUD = () => {
       </HStack>
 
       <Box mt={4}>
-        <Text>Total de Pontos: {getTotalScore()}</Text>
+        <Text>Total de Acertos: {answers.reduce((total, answer) => total + answer.score, 0)}</Text>
+        <Text>Total de Erros: {answers.reduce((total, answer) => total + (answer.score === 0 ? 1 : 0), 0)}</Text>
       </Box>
     </VStack>
   );
