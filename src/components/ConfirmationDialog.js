@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, VStack, Text, Button } from 'native-base';
+import { Modal, VStack, Text, Button, HStack } from 'native-base';
 
 const ConfirmationDialog = ({ isOpen, onClose, onConfirm }) => {
   return (
@@ -11,10 +11,14 @@ const ConfirmationDialog = ({ isOpen, onClose, onConfirm }) => {
           <Text>Tem certeza de que deseja deletar todas as perguntas? Esta ação não pode ser desfeita.</Text>
         </Modal.Body>
         <Modal.Footer>
-          <VStack space={2} alignItems="flex-end">
-            <Button colorScheme="red" onPress={onConfirm}>Confirmar</Button>
-            <Button onPress={onClose}>Cancelar</Button>
-          </VStack>
+          <HStack space={2}>
+            <Button colorScheme="red" onPress={onConfirm} accessibilityLabel="Confirmar deleção">
+              Confirmar
+            </Button>
+            <Button variant="ghost" onPress={onClose} accessibilityLabel="Cancelar deleção">
+              Cancelar
+            </Button>
+          </HStack>
         </Modal.Footer>
       </Modal.Content>
     </Modal>
