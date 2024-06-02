@@ -32,7 +32,7 @@ const Aluno = ({ navigation }) => {
   const fetchAlunos = async () => {
     setLoading(true);
     try {
-      const response = await fetch('https://apialunotcc.azurewebsites.net/alunos');
+      const response = await fetch('https://somenteapialuno.azurewebsites.net/alunos');
       if (!response.ok) {
         throw new Error('Erro ao carregar alunos');
       }
@@ -48,7 +48,7 @@ const Aluno = ({ navigation }) => {
   const handleAddAluno = async () => {
     const data = { nome, email, senha, turma };
     try {
-      await fetch('https://apialunotcc.azurewebsites.net/alunos', {
+      await fetch('https://somenteapialuno.azurewebsites.net/alunos', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -63,7 +63,7 @@ const Aluno = ({ navigation }) => {
   const handleUpdateAluno = async () => {
     const data = { nome, email, senha, turma };
     try {
-      await fetch(`https://apialunotcc.azurewebsites.net/alunos/${selectedId}`, {
+      await fetch(`https://somenteapialuno.azurewebsites.net/alunos/${selectedId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -77,7 +77,7 @@ const Aluno = ({ navigation }) => {
 
   const handleDeleteAluno = async () => {
     try {
-      await fetch(`https://apialunotcc.azurewebsites.net/alunos/${selectedId}`, {
+      await fetch(`https://somenteapialuno.azurewebsites.net/alunos/${selectedId}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
       });
@@ -91,7 +91,7 @@ const Aluno = ({ navigation }) => {
 
   const handleSelectAluno = async (id) => {
     try {
-      const response = await fetch(`https://apialunotcc.azurewebsites.net/alunos/${id}`);
+      const response = await fetch(`https://somenteapialuno.azurewebsites.net/alunos/${id}`);
       if (!response.ok) {
         throw new Error('Erro ao carregar aluno');
       }
@@ -179,7 +179,7 @@ const Aluno = ({ navigation }) => {
               <Button onPress={() => handleSelectAluno(item.id)}>Selecionar</Button>
             </Box>
           )}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={(item) => String(item.id)}
           mb={4}
         />
       )}

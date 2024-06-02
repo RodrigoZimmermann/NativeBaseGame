@@ -9,7 +9,6 @@ import {
   Text,
   Spinner,
   HStack,
-  Center,
   useToast,
 } from 'native-base';
 import { useColorModeValue } from '../components/ColorModeContext';
@@ -29,7 +28,6 @@ const chemicalElements = [
 const Pergunta_Resposta = ({ navigation }) => {
   const { mode } = useColorModeValue();
   const [questions, setQuestions] = useState([]);
-  const [answers, setAnswers] = useState([]);
   const [loadingQuestions, setLoadingQuestions] = useState(true);
   const [text, setText] = useState('');
   const [selectedElement, setSelectedElement] = useState('');
@@ -37,14 +35,35 @@ const Pergunta_Resposta = ({ navigation }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(5);
   const [showConfirmButtons, setShowConfirmButtons] = useState(false);
+  const [alunos, setAlunos] = useState([]);
+  const [selectedAluno, setSelectedAluno] = useState('');
   const toast = useToast();
 
+  const handleValueChange = (nome) => {
+    const aluno = alunos.find((aluno) => aluno.nome === nome);
+    if (aluno) {
+      setSelectedAluno(aluno.id);
+    }
+  };
+
+  const fetchAlunos = useCallback(async () => {
+    try {
+      const alunosResponse = await fetch('https://somenteapialuno.azurewebsites.net/alunos/');
+      if (!alunosResponse.ok) {
+        throw new Error('Erro ao carregar alunos');
+      }
+      const alunosData = await alunosResponse.json();
+      setAlunos(alunosData);
+    } catch (error) {
+      toast.show({ description: 'Erro ao carregar alunos' });
+    }
+  }, [toast]);
+
   const handleReloadQuestions = useCallback(async () => {
-    setLoadingQuestions(true);
     try {
       const [perguntaResponse, respostaResponse] = await Promise.all([
-        fetch('https://apigametcc.azurewebsites.net/api/pergunta'),
-        fetch('https://apigametcc.azurewebsites.net/api/resposta'),
+        fetch('https://somenteapigame.azurewebsites.net/api/pergunta'),
+        fetch('https://somenteapigame.azurewebsites.net/api/resposta'),
       ]);
 
       if (!perguntaResponse.ok || !respostaResponse.ok) {
@@ -54,29 +73,50 @@ const Pergunta_Resposta = ({ navigation }) => {
       const perguntaData = await perguntaResponse.json();
       const respostaData = await respostaResponse.json();
 
-      const perguntaComScore = perguntaData.map((pergunta, index) => {
-        if (index < respostaData.length) {
-          pergunta.score = respostaData[index].score;
-        }
-        return pergunta;
-      });
+      const perguntaComScore = [];
+      let filteredRespostaData = [...respostaData];
 
-      setQuestions(perguntaComScore);
-      setAnswers(respostaData);
+      for (let i = 0; i < perguntaData.length; i++) {
+      let temRegistro = false;
+        const pergunta = perguntaData[i];
+        for (let j = 0; j < filteredRespostaData.length; j++) {
+          const resposta = filteredRespostaData[j];
+          if (resposta.alunoId == selectedAluno) {
+            pergunta.answer = resposta.answer;
+            filteredRespostaData.splice(j, 1);  // Remove the item from the list
+            perguntaComScore.push(pergunta);    // Add to the result list
+            temRegistro = true;
+            break;  // Exit the inner loop after the first match
+          }
+          filteredRespostaData.splice(j, 1);  // Remove the item from the list
+        }
+        if(!temRegistro){
+          perguntaComScore.push(perguntaData[i]);
+        }
+      }
+      if (perguntaComScore.length > 0) {
+        setQuestions(perguntaComScore);
+      } else {
+        setQuestions(perguntaData);
+      }
     } catch (error) {
       toast.show({ description: 'Erro ao carregar perguntas e respostas' });
     } finally {
       setLoadingQuestions(false);
     }
-  }, [toast]);
+  }, [toast, selectedAluno]);
+
+  useEffect(() => {
+    fetchAlunos();
+  }, [fetchAlunos]);
 
   useEffect(() => {
     handleReloadQuestions();
-  }, [handleReloadQuestions]);
+  }, [handleReloadQuestions, selectedAluno]);
 
   const handleAddQuestion = async () => {
     const data = { question: text, chemicalElement: selectedElement };
-    await fetch('https://apigametcc.azurewebsites.net/api/pergunta', {
+    await fetch('https://somenteapigame.azurewebsites.net/api/pergunta', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
@@ -88,7 +128,7 @@ const Pergunta_Resposta = ({ navigation }) => {
 
   const handleUpdateQuestion = async () => {
     const data = { question: text, chemicalElement: selectedElement };
-    const url = `https://apigametcc.azurewebsites.net/api/pergunta/${selectedId}`;
+    const url = `https://somenteapigame.azurewebsites.net/api/pergunta/${selectedId}`;
     await fetch(url, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -101,7 +141,7 @@ const Pergunta_Resposta = ({ navigation }) => {
   };
 
   const handleDeleteQuestion = async () => {
-    const url = `https://apigametcc.azurewebsites.net/api/pergunta/${selectedId}`;
+    const url = `https://somenteapigame.azurewebsites.net/api/pergunta/${selectedId}`;
     await fetch(url, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
@@ -138,12 +178,18 @@ const Pergunta_Resposta = ({ navigation }) => {
     >
       <VStack space={4} width="80%" maxW="300px">
         <Button onPress={() => navigation.navigate('Menu')} mb={4}>Voltar ao Menu</Button>
-        <Text>ID:</Text>
-        <Input
-          placeholder="ID"
-          value={selectedId ? selectedId.toString() : ''}
-          isReadOnly
-        />
+        <Text>Aluno:</Text>
+        <Select
+          selectedValue={alunos.find((aluno) => aluno.id === selectedAluno)?.nome}
+          minWidth={200}
+          accessibilityLabel="Selecione um aluno"
+          placeholder="Selecione um aluno"
+          onValueChange={handleValueChange}
+        >
+          {alunos.map((aluno, index) => (
+            <Select.Item key={index} label={aluno.nome} value={aluno.nome} />
+          ))}
+        </Select>
         <Text>Pergunta:</Text>
         <Input
           placeholder="Digite a pergunta"
@@ -195,11 +241,11 @@ const Pergunta_Resposta = ({ navigation }) => {
               <Text fontWeight="bold">ID: {item.id}</Text>
               <Text>Pergunta: {item.question.replace(/(.{50})/g, '$1-\n')}</Text>
               <Text>Elemento Químico: {item.chemicalElement}</Text>
-              <Text>{item.score === 1 ? 'Resultado: Acertou' : item.score === 0 ? 'Resultado: Errou' : ''}</Text>
+              <Text>{Number(item.answer) === 1 ? 'Resultado: Acertou' : Number(item.answer) === 0 ? 'Resultado: Errou' : ''}</Text>
               <Button onPress={() => handleSelectQuestion(item.id, item.chemicalElement, item.question)}>Selecionar</Button>
             </Box>
           )}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={(item) => String(item.id)}
           mb={4}
         />
       )}
@@ -209,10 +255,6 @@ const Pergunta_Resposta = ({ navigation }) => {
         <Button onPress={handleNextPage}>Próxima Página</Button>
       </HStack>
 
-      <Center mt={4}>
-        <Text>Total de Acertos: {answers.reduce((total, answer) => total + (answer.score === 1 ? 1 : 0), 0)}</Text>
-        <Text>Total de Erros: {answers.reduce((total, answer) => total + (answer.score === 0 ? 1 : 0), 0)}</Text>
-      </Center>
     </Box>
   );
 };
