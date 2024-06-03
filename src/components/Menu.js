@@ -87,7 +87,7 @@ const Menu = ({ navigation }) => {
         <Button onPress={() => navigation.navigate('Professor', { fromLogin: false })}>Professor</Button>
         <Button onPress={() => navigation.navigate('Aluno')}>Aluno</Button>
         <Button onPress={() => navigation.navigate('Pergunta_Resposta')}>Perguntas e Respostas</Button>
-        <Button onPress={fetchAlunosComPontuacao}>Atualizar Dashboard</Button>
+        <Button onPress={fetchAlunosComPontuacao}>Atualizar tabela</Button>
       </VStack>
 
       <Center width="100%">
