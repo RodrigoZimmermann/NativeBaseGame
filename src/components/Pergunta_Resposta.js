@@ -48,7 +48,7 @@ const Pergunta_Resposta = ({ navigation }) => {
 
   const fetchAlunos = useCallback(async () => {
     try {
-      const alunosResponse = await fetch('https://somenteapialuno.azurewebsites.net/alunos/');
+      const alunosResponse = await fetch('https://bancoapialuno.azurewebsites.net/alunos/');
       if (!alunosResponse.ok) {
         throw new Error('Erro ao carregar alunos');
       }
@@ -62,8 +62,8 @@ const Pergunta_Resposta = ({ navigation }) => {
   const handleReloadQuestions = useCallback(async () => {
     try {
       const [perguntaResponse, respostaResponse] = await Promise.all([
-        fetch('https://somenteapigame.azurewebsites.net/api/pergunta'),
-        fetch('https://somenteapigame.azurewebsites.net/api/resposta'),
+        fetch('https://bancoapigame.azurewebsites.net/api/pergunta'),
+        fetch('https://bancoapigame.azurewebsites.net/api/resposta'),
       ]);
 
       if (!perguntaResponse.ok || !respostaResponse.ok) {
@@ -116,7 +116,7 @@ const Pergunta_Resposta = ({ navigation }) => {
 
   const handleAddQuestion = async () => {
     const data = { question: text, chemicalElement: selectedElement };
-    await fetch('https://somenteapigame.azurewebsites.net/api/pergunta', {
+    await fetch('https://bancoapigame.azurewebsites.net/api/pergunta', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
@@ -128,7 +128,7 @@ const Pergunta_Resposta = ({ navigation }) => {
 
   const handleUpdateQuestion = async () => {
     const data = { question: text, chemicalElement: selectedElement };
-    const url = `https://somenteapigame.azurewebsites.net/api/pergunta/${selectedId}`;
+    const url = `https://bancoapigame.azurewebsites.net/api/pergunta/${selectedId}`;
     await fetch(url, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -141,7 +141,7 @@ const Pergunta_Resposta = ({ navigation }) => {
   };
 
   const handleDeleteQuestion = async () => {
-    const url = `https://somenteapigame.azurewebsites.net/api/pergunta/${selectedId}`;
+    const url = `https://bancoapigame.azurewebsites.net/api/pergunta/${selectedId}`;
     await fetch(url, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },

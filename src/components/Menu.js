@@ -29,8 +29,8 @@ const Menu = ({ navigation }) => {
     setLoading(true);
     try {
       const [respostaResponse, alunosResponse] = await Promise.all([
-        fetch('https://somenteapigame.azurewebsites.net/api/resposta'),
-        fetch('https://somenteapialuno.azurewebsites.net/alunos/'),
+        fetch('https://bancoapigame.azurewebsites.net/api/resposta'),
+        fetch('https://bancoapialuno.azurewebsites.net/alunos/'),
       ]);
 
       if (!respostaResponse.ok || !alunosResponse.ok) {
