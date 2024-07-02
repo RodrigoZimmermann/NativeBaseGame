@@ -35,6 +35,7 @@ const Pergunta_Resposta = ({ navigation }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(5);
   const [showConfirmButtons, setShowConfirmButtons] = useState(false);
+  const [deletarRespostas, setDeletarRespostas] = useState(false);
   const [alunos, setAlunos] = useState([]);
   const [selectedAluno, setSelectedAluno] = useState('');
   const toast = useToast();
@@ -153,6 +154,15 @@ const Pergunta_Resposta = ({ navigation }) => {
     setSelectedId(null);
   };
 
+  const handleDeleteResposta = async () => {
+    const url = `https://bancoapigame.azurewebsites.net/api/resposta/`;
+    await fetch(url, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    setDeletarRespostas(false);
+  };
+
   const handleSelectQuestion = (id, element, question) => {
     setSelectedId(id);
     setSelectedElement(element);
@@ -221,6 +231,13 @@ const Pergunta_Resposta = ({ navigation }) => {
           )}
         </HStack>
         <Button onPress={handleReloadQuestions}>Gerar Perguntas/Respostas</Button>
+        <Button colorScheme="red" onPress={()=>setDeletarRespostas(true)}>Apagar Respostas</Button>
+        {deletarRespostas && (
+            <>
+              <Button colorScheme="red" onPress={handleDeleteResposta}>Confirmar</Button>
+              <Button onPress={() => setDeletarRespostas(false)}>Cancelar</Button>
+            </>
+          )}
       </VStack>
 
       {loadingQuestions ? (

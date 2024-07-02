@@ -103,7 +103,7 @@ const Menu = ({ navigation }) => {
                 <Text fontWeight="bold">Nome {sortedBy === 'nome' ? (sortOrder === 'asc' ? '↑' : '↓') : ''}</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => handleSort('email')}>
-                <Text fontWeight="bold">Email {sortedBy === 'email' ? (sortOrder === 'asc' ? '↑' : '↓') : ''}</Text>
+                <Text fontWeight="bold">Login {sortedBy === 'email' ? (sortOrder === 'asc' ? '↑' : '↓') : ''}</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => handleSort('pontuacao')}>
                 <Text fontWeight="bold">Pontuação {sortedBy === 'pontuacao' ? (sortOrder === 'asc' ? '↑' : '↓') : ''}</Text>

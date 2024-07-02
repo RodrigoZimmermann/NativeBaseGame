@@ -128,12 +128,11 @@ const Aluno = ({ navigation }) => {
         </Button>
         <Text>Nome:</Text>
         <Input placeholder="Nome" value={nome} onChangeText={setNome} />
-        <Text>Email:</Text>
+        <Text>Login:</Text>
         <Input
-          placeholder="Email"
+          placeholder="Login"
           value={email}
           onChangeText={setEmail}
-          keyboardType="email-address"
         />
         <Text>Senha:</Text>
         <Input placeholder="Senha" value={senha} onChangeText={setSenha} type="password" />
@@ -174,7 +173,7 @@ const Aluno = ({ navigation }) => {
             >
               <Text fontWeight="bold">ID: {item.id}</Text>
               <Text>Nome: {item.nome}</Text>
-              <Text>Email: {item.email}</Text>
+              <Text>Login: {item.email}</Text>
               <Text>Turma: {item.turma}</Text>
               <Button onPress={() => handleSelectAluno(item.id)}>Selecionar</Button>
             </Box>
