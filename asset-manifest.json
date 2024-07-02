@@ -1,12 +1,12 @@
 {
   "files": {
-    "main.js": "/NativeBaseGame/static/js/main.592959a2.js",
+    "main.js": "/NativeBaseGame/static/js/main.15db8138.js",
     "static/js/845.7890e1f7.chunk.js": "/NativeBaseGame/static/js/845.7890e1f7.chunk.js",
     "index.html": "/NativeBaseGame/index.html",
-    "main.592959a2.js.map": "/NativeBaseGame/static/js/main.592959a2.js.map",
+    "main.15db8138.js.map": "/NativeBaseGame/static/js/main.15db8138.js.map",
     "845.7890e1f7.chunk.js.map": "/NativeBaseGame/static/js/845.7890e1f7.chunk.js.map"
   },
   "entrypoints": [
-    "static/js/main.592959a2.js"
+    "static/js/main.15db8138.js"
   ]
 }
